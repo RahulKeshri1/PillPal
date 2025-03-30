@@ -1,21 +1,18 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-// Create simple Firebase configuration
+// Hardcoded Firebase configuration from your .env values
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.firebaseapp.com`,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.appspot.com`,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  apiKey: "AIzaSyAF7WY8XmXW4PNg9SEiL_4-hqfDnw79Zj8",
+  authDomain: "pillpal-a9052.firebaseapp.com",
+  projectId: "pillpal-a9052",
+  storageBucket: "pillpal-a9052.firebasestorage.app",
+  messagingSenderId: "846484782018",
+  appId: "1:846484782018:web:7f611093737fa6604eb45b",
+  measurementId: "G-PT7BNP1VBS",
+  databaseURL: "https://pillpal-a9052-default-rtdb.firebaseio.com"
 };
-
-// Log configuration status (without exposing values)
-console.log('Firebase configuration check:');
-console.log('API Key exists:', !!firebaseConfig.apiKey);
-console.log('Project ID exists:', !!firebaseConfig.projectId);
-console.log('App ID exists:', !!firebaseConfig.appId);
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -25,6 +22,6 @@ const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 const db = getFirestore(app);
 
-// Export the initialized services
+// Export Firebase services
 export { auth, googleProvider, db };
 export default app;
