@@ -43,7 +43,15 @@ export const useMedication = (userId: string | null) => {
         const data = doc.data();
         return {
           id: doc.id,
-          ...data,
+          userId: data.userId,
+          name: data.name,
+          dosage: data.dosage,
+          instructions: data.instructions,
+          schedule: data.schedule,
+          time: data.time,
+          remainingDoses: data.remainingDoses,
+          totalDoses: data.totalDoses,
+          barcode: data.barcode,
           createdAt: data.createdAt?.toDate() || new Date(),
           updatedAt: data.updatedAt?.toDate() || new Date()
         } as Medication;
@@ -86,9 +94,12 @@ export const useMedication = (userId: string | null) => {
         const data = doc.data();
         return {
           id: doc.id,
-          ...data,
+          medicationId: data.medicationId,
+          userId: data.userId,
+          status: data.status,
           scheduledTime: data.scheduledTime?.toDate() || new Date(),
           takenTime: data.takenTime?.toDate() || null,
+          notes: data.notes,
           createdAt: data.createdAt?.toDate() || new Date()
         } as MedicationLog;
       });
@@ -108,8 +119,11 @@ export const useMedication = (userId: string | null) => {
 
   // Add a new medication
   const addMedication = async (medicationData: MedicationForm): Promise<Medication | null> => {
+    console.log('Adding medication with data:', medicationData);
     try {
       setError(null);
+      
+      console.log('Current userId:', userId);
       
       const newMedication: Partial<Medication> = {
         userId: userId || 'offline',
@@ -123,28 +137,43 @@ export const useMedication = (userId: string | null) => {
         createdAt: new Date(),
         updatedAt: new Date(),
       };
+      
+      console.log('Created newMedication object:', newMedication);
 
       if (userId) {
+        console.log('Adding to Firestore with userId:', userId);
         // Add to Firestore
-        const medRef = doc(collection(db, 'medications'));
-        await setDoc(medRef, {
-          ...newMedication,
-          createdAt: Timestamp.now(),
-          updatedAt: Timestamp.now(),
-        });
+        try {
+          const medRef = doc(collection(db, 'medications'));
+          console.log('Created reference to medications collection');
+          
+          await setDoc(medRef, {
+            ...newMedication,
+            createdAt: Timestamp.now(),
+            updatedAt: Timestamp.now(),
+          });
+          
+          console.log('Successfully added document to Firestore with ID:', medRef.id);
 
-        const savedMedication = {
-          id: medRef.id,
-          ...newMedication
-        } as Medication;
+          const savedMedication = {
+            id: medRef.id,
+            ...newMedication
+          } as Medication;
 
-        setMedications(prev => [...prev, savedMedication]);
-        
-        // Also save to localStorage
-        addMedicationToLS(savedMedication);
-        
-        return savedMedication;
+          console.log('Saved medication:', savedMedication);
+          
+          setMedications(prev => [...prev, savedMedication]);
+          
+          // Also save to localStorage
+          addMedicationToLS(savedMedication);
+          
+          return savedMedication;
+        } catch (firestoreErr) {
+          console.error('Firestore error:', firestoreErr);
+          throw firestoreErr;
+        }
       } else {
+        console.log('Adding to localStorage only (offline mode)');
         // Add to localStorage only (offline mode)
         const newId = Date.now();
         const savedMedication = {
@@ -152,6 +181,8 @@ export const useMedication = (userId: string | null) => {
           ...newMedication
         } as Medication;
 
+        console.log('Created offline medication with ID:', newId);
+        
         setMedications(prev => [...prev, savedMedication]);
         addMedicationToLS(savedMedication);
         

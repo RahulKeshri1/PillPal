@@ -91,9 +91,21 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({ isOpen, onOpenC
   };
 
   const onSubmit = async (values: MedicationFormValues) => {
-    const result = await addMedication(values);
-    if (result) {
-      handleOpenChange(false);
+    console.log('AddMedicationModal - Form submitted with values:', values);
+    
+    try {
+      console.log('AddMedicationModal - Calling addMedication function');
+      const result = await addMedication(values);
+      console.log('AddMedicationModal - Result from addMedication:', result);
+      
+      if (result) {
+        console.log('AddMedicationModal - Successfully added medication, closing modal');
+        handleOpenChange(false);
+      } else {
+        console.error('AddMedicationModal - Failed to add medication, result was null');
+      }
+    } catch (error) {
+      console.error('AddMedicationModal - Error in onSubmit:', error);
     }
   };
 

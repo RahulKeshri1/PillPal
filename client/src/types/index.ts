@@ -6,7 +6,7 @@ export interface UserProfile {
 }
 
 export interface Medication {
-  id: number;
+  id: number | string;  // Changed to accept string IDs from Firestore
   userId: string;
   name: string;
   dosage: string;
@@ -21,8 +21,8 @@ export interface Medication {
 }
 
 export interface MedicationLog {
-  id: number;
-  medicationId: number;
+  id: number | string;  // Changed to accept string IDs from Firestore
+  medicationId: number | string;  // Changed to accept string IDs from Firestore
   userId: string;
   status: 'taken' | 'missed' | 'skipped';
   scheduledTime: Date;
@@ -34,10 +34,11 @@ export interface MedicationLog {
 export interface MedicationForm {
   name: string;
   dosage: string;
-  instructions: string;
+  instructions?: string;  // Changed to optional to match form handling
   schedule: string;
   timeOfDay: string[];
   quantity: number;
+  barcode?: string;
 }
 
 export interface Profile {
