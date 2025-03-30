@@ -1,46 +1,30 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
 
-// Extract environment variables
-const API_KEY = import.meta.env.VITE_FIREBASE_API_KEY;
-const PROJECT_ID = import.meta.env.VITE_FIREBASE_PROJECT_ID;
-const APP_ID = import.meta.env.VITE_FIREBASE_APP_ID;
-
-// Debug: Log environment variables (without exposing full values)
-console.log('Firebase config check:');
-console.log('API Key exists:', !!API_KEY, 'Length:', API_KEY?.length);
-console.log('Project ID exists:', !!PROJECT_ID);
-console.log('App ID exists:', !!APP_ID);
-
-// Create Firebase configuration
+// Create simple Firebase configuration
 const firebaseConfig = {
-  apiKey: API_KEY,
-  authDomain: `${PROJECT_ID}.firebaseapp.com`,
-  projectId: PROJECT_ID,
-  storageBucket: `${PROJECT_ID}.appspot.com`,
-  messagingSenderId: "",
-  appId: APP_ID,
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.firebaseapp.com`,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.appspot.com`,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
+
+// Log configuration status (without exposing values)
+console.log('Firebase configuration check:');
+console.log('API Key exists:', !!firebaseConfig.apiKey);
+console.log('Project ID exists:', !!firebaseConfig.projectId);
+console.log('App ID exists:', !!firebaseConfig.appId);
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Authentication and get a reference to the service
-export const auth = getAuth(app);
-export const googleProvider = new GoogleAuthProvider();
+// Initialize Firebase services
+const auth = getAuth(app);
+const googleProvider = new GoogleAuthProvider();
+const db = getFirestore(app);
 
-// Initialize Firestore and get a reference to the service
-export const db = getFirestore(app);
-
-// Enable offline persistence (for offline capabilities)
-enableIndexedDbPersistence(db)
-  .catch((err) => {
-    if (err.code === 'failed-precondition') {
-      console.error('Multiple tabs open, persistence can only be enabled in one tab at a time.');
-    } else if (err.code === 'unimplemented') {
-      console.error('The current browser does not support all of the features required to enable persistence');
-    }
-  });
-
+// Export the initialized services
+export { auth, googleProvider, db };
 export default app;
