@@ -2,13 +2,25 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
 
+// Extract environment variables
+const API_KEY = import.meta.env.VITE_FIREBASE_API_KEY;
+const PROJECT_ID = import.meta.env.VITE_FIREBASE_PROJECT_ID;
+const APP_ID = import.meta.env.VITE_FIREBASE_APP_ID;
+
+// Debug: Log environment variables (without exposing full values)
+console.log('Firebase config check:');
+console.log('API Key exists:', !!API_KEY, 'Length:', API_KEY?.length);
+console.log('Project ID exists:', !!PROJECT_ID);
+console.log('App ID exists:', !!APP_ID);
+
+// Create Firebase configuration
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.firebaseapp.com`,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.appspot.com`,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  apiKey: API_KEY,
+  authDomain: `${PROJECT_ID}.firebaseapp.com`,
+  projectId: PROJECT_ID,
+  storageBucket: `${PROJECT_ID}.appspot.com`,
+  messagingSenderId: "",
+  appId: APP_ID,
 };
 
 // Initialize Firebase
